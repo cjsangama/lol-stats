@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>LoL Champion Finder</title>
+
+<style>
+
+body{
+background:#0f172a;
+color:white;
+font-family:Arial;
+text-align:center;
+margin:0;
+}
+
+header{
+background:#111827;
+padding:20px;
+box-shadow:0 4px 10px rgba(0,0,0,0.5);
+}
+
+h1{
+margin:0;
+color:#60a5fa;
+}
+
+input{
+margin-top:15px;
+padding:10px;
+width:300px;
+border-radius:6px;
+border:none;
+outline:none;
+}
+
+.container{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:20px;
+padding:40px;
+}
+
+.card{
+background:#1f2937;
+border-radius:10px;
+overflow:hidden;
+transition:0.25s;
+cursor:pointer;
+}
+
+.card:hover{
+transform:translateY(-6px);
+box-shadow:0 10px 25px rgba(0,0,0,0.7);
+}
+
+.card img{
+width:100%;
+height:260px;
+object-fit:cover;
+}
+
+.card h2{
+margin:10px;
+font-size:18px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>LoL Champion Finder</h1>
+
+<input type="text" id="search" placeholder="Buscar campeón...">
+
+</header>
+
+<div class="container" id="champions"></div>
+
+<script>
+
+const container = document.getElementById("champions")
+const search = document.getElementById("search")
+
+let championsData = []
+
+async function loadChampions(){
+
+let response = await fetch("https://ddragon.leagueoflegends.com/cdn/13.24.1/data/en_US/champion.json")
+
+let data = await response.json()
+
+championsData = Object.values(data.data)
+
+displayChampions(championsData)
+
+}
+
+function displayChampions(champions){
+
+container.innerHTML=""
+
+champions.forEach(champion => {
+
+let card = document.createElement("div")
+
+card.classList.add("card")
+
+card.innerHTML = `
+<img src="https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champion.id}_0.jpg">
+<h2>${champion.name}</h2>
+`
+
+container.appendChild(card)
+
+})
+
+}
+
+search.addEventListener("keyup", function(){
+
+let text = search.value.toLowerCase()
+
+let filtered = championsData.filter(champion =>
+champion.name.toLowerCase().includes(text)
+)
+
+displayChampions(filtered)
+
+})
+
+loadChampions()
+
+</script>
+
+</body>
+
+</html>
